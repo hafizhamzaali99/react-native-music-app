@@ -19,10 +19,10 @@ const MusicPlayer = () => {
 
   useEffect(() => {
     scrollX.addListener(({ value }) => {
-      console.log(`value: ${value}, Device width:${width}`)
+      // console.log(`value: ${value}, Device width:${width}`)
       const index = Math.round(value/width)
       setSongIndex(index)
-      console.log('index',index)
+      // console.log('index',index)
     })
   }, [])
 
