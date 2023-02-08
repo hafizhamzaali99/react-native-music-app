@@ -2,35 +2,64 @@ import React, { useEffect, useState, useRef } from 'react';
 import { Text, StyleSheet, View, SafeAreaView, TouchableOpacity, Dimensions, Image, ScrollView, FlatList, Animated } from 'react-native';
 import Slider from '@react-native-community/slider';
 import Ionicons from 'react-native-vector-icons/Ionicons'
-// eslint-disable-next-line
 import IMG_1_IMAGE from '../assets/img/img1.jpg'
-// import { FlatList } from 'react-native';
 import songs from '../model/data';
 import { TabBarItem } from 'react-native-tab-view';
 import BottomContainer from './BottomContainer';
+import TrackPlayer,{ Capability,Event,usePlaybackState,State,RepeatMode,useTrackPlayerEvents,useProgress,AppKilledPlaybackBehavior} from 'react-native-track-player';
+
 
 const { width, height } = Dimensions.get('window')
+
+const setUpPlayer = async () => {
+  try{
+    await TrackPlayer.setupPlayer()
+    await TrackPlayer.add(songs)
+  }catch(e){
+    console.log(e)
+  } 
+}
+
+const togglePlayBack = async (playBackState) => {
+
+  const currentTrack = await TrackPlayer.getCurrentTrack()
+  console.log('current track',currentTrack)
+  if(currentTrack != null){
+    console.log(playBackState == State.Paused)
+    if(playBackState == State.Paused){
+      await TrackPlayer.play()
+    }
+    else{
+      await TrackPlayer.pause()
+    }
+  }
+}
 
 const MusicPlayer = () => {
 
   const [songIndex,setSongIndex] = useState(0)
 
   const scrollX = useRef(new Animated.Value(0)).current
+  // console.log('scrollX',scrollX,'width',width)
+  const playBackState = usePlaybackState() 
 
   useEffect(() => {
-    scrollX.addListener(({ value }) => {
+    setUpPlayer()
+    scrollX.addListener(({value}) => {
+      // console.log('e object',e)
       // console.log(`value: ${value}, Device width:${width}`)
       const index = Math.round(value/width)
-      setSongIndex(index)
       // console.log('index',index)
-    })
+      setSongIndex(index)
+    })  
   }, [])
+
 
   const renderSong = ({ item, index }) => {
     return (
       <Animated.View style={styles.mainImageContainer}>
         <View style={[styles.imageWrapper,]}>
-          <Image source={item.artwork} style={[styles.songImage, styles.elevation]} />
+          <Image source={item.artwork} style={[styles.songImage]} />
         </View>
       </Animated.View>
     )
@@ -40,7 +69,6 @@ const MusicPlayer = () => {
     <SafeAreaView style={styles.container}>
 
       <View style={styles.mainContainer}>
-
         <Animated.FlatList
           renderItem={renderSong}
           data={songs}
@@ -61,7 +89,7 @@ const MusicPlayer = () => {
         />
 
         <View style={{ flex: 1 }}>
-          <View>
+          <View style={styles.songContentContainer}>
             <Text style={[styles.songName, styles.songContent]}>{songs[songIndex].title}</Text>
             <Text style={[styles.songArtist, styles.songContent]}>{songs[songIndex].artist}</Text>
           </View>
@@ -87,8 +115,8 @@ const MusicPlayer = () => {
             <TouchableOpacity onPress={() => { }}>
               <Ionicons name='play-skip-back-outline' size={30} color="#FFD369" />
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => { }}>
-              <Ionicons name='ios-pause-circle' size={70} color="#FFD369" />
+            <TouchableOpacity onPress={() => togglePlayBack(playBackState)}>
+              <Ionicons name={playBackState===State.Playing ? 'ios-pause-circle' : 'ios-play-circle'} size={70} color="#FFD369" />
             </TouchableOpacity>
             <TouchableOpacity onPress={() => { }}>
               <Ionicons name='play-skip-forward-outline' size={30} color="#FFD369" />
@@ -160,6 +188,12 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '300',
   },
+  songContentContainer:{
+    flex:1,
+    // backgroundColor:"red",
+    justifyContent:'center'
+  }
+  ,
   songContent: {
     textAlign: 'center',
     color: '#eeeeee'
@@ -174,13 +208,13 @@ const styles = StyleSheet.create({
     color: "#fff"
   },
   musicControlContainer: {
+    // backgroundColor:"red",
     flexDirection: 'row',
     justifyContent: 'space-evenly',
     alignItems: 'center',
-    // backgroundColor:"red",
-    // width: 340,
     marginHorizontal: 20,
-    marginTop: 15
+    marginTop: 15,
+    flex:1
   },
   mainImageContainer: {
     width: width,

@@ -17,7 +17,7 @@ const BottomContainer = () => {
           <TouchableOpacity onPress={() => { }}>
             <Ionicons name='share-outline' size={30} color="#888888" />
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => { }}>
+          <TouchableOpacity onPress={() => { }}>   
             <Ionicons name='ellipsis-horizontal' size={30} color="#888888" />
           </TouchableOpacity>
         </View>

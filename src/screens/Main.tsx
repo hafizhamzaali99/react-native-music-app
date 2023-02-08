@@ -1,14 +1,15 @@
 import * as React from 'react';
 import { View, useWindowDimensions } from 'react-native';
 import { TabView, SceneMap, TabBar} from 'react-native-tab-view';
+import Artist from '../components/Artist';
 import MusicPlayer from '../components/MusicPlayer';
 
 const FirstRoute = () => (
-  <MusicPlayer/>
+  <MusicPlayer />
 );
 
 const SecondRoute = () => (
-  <View style={{ flex: 1, backgroundColor: '#222831' }} />
+  <Artist />
 );
 
 const ThirdRoute = () => (

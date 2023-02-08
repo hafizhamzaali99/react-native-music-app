@@ -1,8 +1,6 @@
 import React from 'react';
 import {StatusBar, StyleSheet, View} from 'react-native';
-// import TabViewExample from './screens/Main';
-// import MusicPlayer from './components/MusicPlayer';
-import Main from './screens/Main';
+import Main from './src/screens/Main';
 
 
 const App = () => {
